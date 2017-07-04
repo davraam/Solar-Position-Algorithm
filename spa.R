@@ -65,7 +65,7 @@ omega <- surface.slope  # the slope of the surface measured from the horizontal 
 gamma <- surface.azimuth.rotation  # the surface azimuth rotation angle, measured from south to the projection of the surface
 
 # Option to return all the values with 20 decimal places
-#options(digits=20)
+options(digits=20)
 
 
 ########################################################################
@@ -651,7 +651,7 @@ v.UT0 <- v0.UT0.limited + Deltapsi.UT0*cos(epsilon.UT0*pi/180)
 #
 ###############################################################################
 
-DeltaT.TT0 <- 0
+DeltaT.TT0 <- DeltaT
 
 # At 0 TT
 hour <- 0
@@ -1095,7 +1095,7 @@ delta.aft.TT0 <- (delta.aft.TT0*180)/pi
 
 
 # Calculate the approximate sun transit time, m0, in fraction of day
-m0 <- (alpha.TT0 - sigma - v.UT0)/360
+m0 <- (alpha.limited.TT0 - sigma - v.UT0)/360
 
 # Calculate the local hour angle corresponding to the sun elevation (h0Prime=-0.8333)
 h0Prime <- -0.8333
@@ -1154,8 +1154,8 @@ n1 <- m1.limited + DeltaT.TT0/86400
 n2 <- m2.limited + DeltaT.TT0/86400
 
 # Calculate the values alphaPrime_i and deltaPrime_i, in degrees
-a <- alpha.TT0-alpha.bef.TT0
-b <- alpha.aft.TT0-alpha.TT0
+a <- alpha.limited.TT0-alpha.limited.bef.TT0
+b <- alpha.limited.aft.TT0-alpha.limited.TT0
 if (abs(a) > 2){
   if (a < 0){
     a <- 1 - abs(a - trunc(a))
@@ -1188,9 +1188,9 @@ if (abs(bPrime) > 2){
   }
 }
 cPrime <- bPrime-aPrime
-alphaPrime0 <- alpha.TT0 + (n0*(a+b+c*n0))/2
-alphaPrime1 <- alpha.TT0 + (n1*(a+b+c*n1))/2
-alphaPrime2 <- alpha.TT0 + (n2*(a+b+c*n2))/2
+alphaPrime0 <- alpha.limited.TT0 + (n0*(a+b+c*n0))/2
+alphaPrime1 <- alpha.limited.TT0 + (n1*(a+b+c*n1))/2
+alphaPrime2 <- alpha.limited.TT0 + (n2*(a+b+c*n2))/2
 deltaPrime0 <- delta.TT0 + (n0*(aPrime+bPrime+cPrime*n0))/2
 deltaPrime1 <- delta.TT0 + (n1*(aPrime+bPrime+cPrime*n1))/2
 deltaPrime2 <- delta.TT0 + (n2*(aPrime+bPrime+cPrime*n2))/2
@@ -1264,7 +1264,7 @@ h1 <- h1*180/pi
 h2 <- h2*180/pi
 
 # Calculate the sun transit, Transit (in fraction of day)
-Transit <- m0.limited - HPrime0/360
+Transit <- m0.limited - HPrime0.limited/360
 
 # Change to local time
 Transit <- Transit + timezone/24
@@ -1284,7 +1284,7 @@ Transit.sec <- trunc((((24 * Transit) - trunc(24 * Transit)) * 60 - trunc(((24 *
 Transit.time <- paste0(Transit.hour,":",Transit.minutes,":",Transit.sec)
 
 # Calculate the sunrise, Sunrise (in franction of day)
-Sunrise <- m1.limited + (h1-h0Prime)/(360*cos(deltaPrime1*pi/180)*cos(phi*pi/180)*sin(HPrime1))
+Sunrise <- m1.limited + (h1-h0Prime)/(360*cos(deltaPrime1*pi/180)*cos(phi*pi/180)*sin(HPrime1.limited*pi/180))
 
 # Change to local time
 Sunrise <- Sunrise + timezone/24
@@ -1304,7 +1304,7 @@ Sunrise.sec <- trunc((((24 * Sunrise) - trunc(24 * Sunrise)) * 60 - trunc(((24 *
 Sunrise.time <- paste0(Sunrise.hour,":",Sunrise.minutes,":",Sunrise.sec)
 
 # Calculate the sunset, Sunset (in fraction of day)
-Sunset <- m2.limited + (h2-h0Prime)/(360*cos(deltaPrime2*pi/180)*cos(phi*pi/180)*sin(HPrime2))
+Sunset <- m2.limited + (h2-h0Prime)/(360*cos(deltaPrime2*pi/180)*cos(phi*pi/180)*sin(HPrime2.limited*pi/180))
 
 # Change to local time
 Sunset <- Sunset + timezone/24
@@ -1326,5 +1326,5 @@ Sunset.time <- paste0(Sunset.hour,":",Sunset.minutes,":",Sunset.sec)
 
 return(list(JD=JD,L0=L0,L1=L1,L2=L2,L3=L3,L4=L4,L5=L5,L=L.limited,B0=B0,B1=B1,B=B,R0=R0,R1=R1,R2=R2,R3=R3,R4=R4,R=R,Theta=Theta.limited,beta=beta,Deltapsi=Deltapsi,Deltaepsilon=Deltaepsilon,epsilon=epsilon,lambda=lambda,alpha=alpha.limited,delta=delta,H=H.limited,alphaPrime=alphaPrime,deltaPrime=deltaPrime,HPrime=HPrime,theta=theta,Phi=Phi.limited,I=I,M=M.limited,E=E,Sunrise.time=Sunrise.time, Transit.time=Transit.time, Sunset.time=Sunset.time))
 
-
 }
+
