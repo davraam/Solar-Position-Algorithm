@@ -55,6 +55,7 @@ minute <- as.numeric(strftime(DateTimeZone, format="%M"))
 sec <- as.numeric(strftime(DateTimeZone, format="%S"))
 #timezone <- as.numeric(strftime(DateTimeZone, format="%z"))/100  # need change!
 
+tz <- timezone
 
 # Input parameters
 Y <- year
@@ -75,11 +76,7 @@ options(digits=20)
 ########################################################################
 
 # convert day to day in decimals (D)
-if (hour < 12){ 
-  D <- day - (hour - timezone + (minute + (sec + DeltaUT1)/60)/60)/24
-}else{
-  D <- day + (hour - timezone + (minute + (sec + DeltaUT1)/60)/60)/24
-}
+D <- day + (hour - tz + (minute + (sec + DeltaUT1)/60)/60)/24
 
 if(month < 3){
   M <- month + 12
@@ -551,9 +548,6 @@ if (E > 20){ E <- E - 1440}
 ###############################################################################
 
 # At 0 UT
-hour <- 0
-minute <- 0
-sec <- 0
 DeltaT.UT0 <- 0 
 D.UT0 <- day 
 if(month < 3){
@@ -652,11 +646,6 @@ v.UT0 <- v0.UT0.limited + Deltapsi.UT0*cos(epsilon.UT0*pi/180)
 ###############################################################################
 
 DeltaT.TT0 <- DeltaT
-
-# At 0 TT
-hour <- 0
-minute <- 0
-sec <- 0
 
 # Find the date before and after the day of interest
 date <- as.Date(paste0(year, '-', month, '-', day))  # input date
@@ -1267,7 +1256,7 @@ h2 <- h2*180/pi
 Transit <- m0.limited - HPrime0.limited/360
 
 # Change to local time
-Transit <- Transit + timezone/24
+Transit <- Transit + tz/24
 
 # Limit Transit to the range from 0 to 1 
 if (Transit < 0){
@@ -1281,13 +1270,13 @@ Transit.hour <- trunc(24 * Transit)
 Transit.minutes <- trunc(((24 * Transit) - trunc(24 * Transit)) * 60)
 Transit.sec <- trunc((((24 * Transit) - trunc(24 * Transit)) * 60 - trunc(((24 * Transit) - trunc(24 * Transit)) * 60)) * 60)
 
-Transit.time <- paste0(Transit.hour,":",Transit.minutes,":",Transit.sec)
+Transit.time <- sprintf("%02d:%02d:%02d", Transit.hour, Transit.minutes, Transit.sec)
 
 # Calculate the sunrise, Sunrise (in franction of day)
 Sunrise <- m1.limited + (h1-h0Prime)/(360*cos(deltaPrime1*pi/180)*cos(phi*pi/180)*sin(HPrime1.limited*pi/180))
 
 # Change to local time
-Sunrise <- Sunrise + timezone/24
+Sunrise <- Sunrise + tz/24
 
 # Limit Sunrise to the range from 0 to 1 
 if (Sunrise < 0){
@@ -1301,13 +1290,13 @@ Sunrise.hour <- trunc(24 * Sunrise)
 Sunrise.minutes <- trunc(((24 * Sunrise) - trunc(24 * Sunrise)) * 60)
 Sunrise.sec <- trunc((((24 * Sunrise) - trunc(24 * Sunrise)) * 60 - trunc(((24 * Sunrise) - trunc(24 * Sunrise)) * 60)) * 60)
 
-Sunrise.time <- paste0(Sunrise.hour,":",Sunrise.minutes,":",Sunrise.sec)
+Sunrise.time <- sprintf("%02d:%02d:%02d", Sunrise.hour, Sunrise.minutes, Sunrise.sec)
 
 # Calculate the sunset, Sunset (in fraction of day)
 Sunset <- m2.limited + (h2-h0Prime)/(360*cos(deltaPrime2*pi/180)*cos(phi*pi/180)*sin(HPrime2.limited*pi/180))
 
 # Change to local time
-Sunset <- Sunset + timezone/24
+Sunset <- Sunset + tz/24
 
 # Limit Sunset to the range from 0 to 1 
 if (Sunset < 0){
@@ -1321,10 +1310,8 @@ Sunset.hour <- trunc(24 * Sunset)
 Sunset.minutes <- trunc(((24 * Sunset) - trunc(24 * Sunset)) * 60)
 Sunset.sec <- trunc((((24 * Sunset) - trunc(24 * Sunset)) * 60 - trunc(((24 * Sunset) - trunc(24 * Sunset)) * 60)) * 60)
 
-Sunset.time <- paste0(Sunset.hour,":",Sunset.minutes,":",Sunset.sec)
+Sunset.time <- sprintf("%02d:%02d:%02d", Sunset.hour, Sunset.minutes, Sunset.sec)
 
-
-return(list(JD=JD,L0=L0,L1=L1,L2=L2,L3=L3,L4=L4,L5=L5,L=L.limited,B0=B0,B1=B1,B=B,R0=R0,R1=R1,R2=R2,R3=R3,R4=R4,R=R,Theta=Theta.limited,beta=beta,Deltapsi=Deltapsi,Deltaepsilon=Deltaepsilon,epsilon=epsilon,lambda=lambda,alpha=alpha.limited,delta=delta,H=H.limited,alphaPrime=alphaPrime,deltaPrime=deltaPrime,HPrime=HPrime,theta=theta,Phi=Phi.limited,I=I,M=M.limited,E=E,Sunrise.time=Sunrise.time, Transit.time=Transit.time, Sunset.time=Sunset.time))
+return(list(JD=JD,L=L.limited,B=B,R=R,Deltapsi=Deltapsi,Deltaepsilon=Deltaepsilon,epsilon=epsilon,H=H.limited,Zenith=theta,Azimuth=Phi.limited,Incidence=I,Sunrise.time=Sunrise.time, Transit.time=Transit.time, Sunset.time=Sunset.time))
 
 }
-
