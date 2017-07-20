@@ -1223,7 +1223,7 @@ if (HPrime1.limited <= -180){
 }
 if (HPrime1.limited >= 180){
   HPrime1.limited <- HPrime1.limited - 360
-}  
+}
 
 # Limit HPrime2 to the range from -180 to 180 degrees
 if (HPrime2 > 360){
