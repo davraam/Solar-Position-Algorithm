@@ -42,7 +42,7 @@ DeltaUT1 <- 0
 B <- 0
 SunRadius <- 0.26667
 
-# Extract year, month, day, hout, minute, seconds and timezone from the input timestamp arqument which is a POSIXct object 
+# Extract year, month, day, hour, minute, seconds and timezone from the input timestamp arqument
 year <- as.numeric(strftime(timestamp, format="%Y"))
 month <- as.numeric(strftime(timestamp, format="%m"))
 day <- as.numeric(strftime(timestamp, format="%d"))
