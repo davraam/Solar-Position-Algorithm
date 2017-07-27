@@ -6,12 +6,7 @@
 #' equal to $\pm 0.0003$ degrees in the period from the year -2000 to 6000. In this algorithm, the azimuth angle
 #' is measured eastward from north and the observer's geographical longitude is considered negative west, or
 #' positive east from Greenwich.
-#' @param year, integer in a 4-digit form (e.g. 2001, 2002, etc). 
-#' @param month, integer valid in the range 1 to 12.
-#' @param day, integer valid in the range 1 to 31.
-#' @param hour, observer local hour, integer valid in the range 0 to 24.
-#' @param minute, observer local minute, integer valid in the range 0 to 59. 
-#' @param sec, observer local second, numeric valid in the range 0 to <60.
+#' @param timestamp, a POSIXct object inticating the observer local time and date.
 #' @param timezone, observer time zone, integer valid in the range -18 to 18 hours.
 #' Negative values indicate zones west of Greenwich. 
 #' @param longitude, the observer longitude in degrees valid in the range -180 to 180 degrees. 
@@ -29,31 +24,32 @@
 #' It is derived from observation only and reported yearly in the Astronomical Almanac 
 #' @return a list with (i) the topocentric zenith angle, theta (in degrees), (ii) the topocentric azimuth angle,
 #' Phi (in degrees), (iii) the incidence angle for a surface oriented in any direction, I (in degrees), (iv) the
-#' sunrise, R (in fraction of day), and (v) the sunset, S (in fraction of day). 
+#' sunrise, R (in local time), and (v) the sunset, S (in local time).
+#' @author Avraam, D. 
 #' @export
 #' @examples {
 #'
 #'   # Example 1
-#'   DateTimeZone <- as.POSIXct("2003-10-17 12:30:30")
-#'   spa(DateTimeZone, timezone=-7, longitude=-105.1786, latitude=39.742476, elevation=1830.14, pressure=820, temperature=11, surface.slope=30, surface.azimuth.rotation=-10, DeltaT=67)
+#'   timestamp <- as.POSIXct("2003-10-17 12:30:30")
+#'   spa(timestamp, timezone=-7, longitude=-105.1786, latitude=39.742476, elevation=1830.14, pressure=820, temperature=11, surface.slope=30, surface.azimuth.rotation=-10, DeltaT=67)
 #'
 #' }
 #'
-spa <- function(DateTimeZone=NULL, timezone=NULL, longitude=NULL, latitude=NULL, elevation=NULL, pressure=NULL, temperature=NULL, surface.slope=NULL, surface.azimuth.rotation=NULL, DeltaT=NULL){
+spa <- function(timestamp=NULL, timezone=NULL, longitude=NULL, latitude=NULL, elevation=NULL, pressure=NULL, temperature=NULL, surface.slope=NULL, surface.azimuth.rotation=NULL, DeltaT=NULL){
 
 # Constant parameters
 DeltaUT1 <- 0
 B <- 0
 SunRadius <- 0.26667
 
-# Extract year, month, day, hout, minute, seconds and timezone from the input DateTimeZone arqument which is a POSIXct object 
-year <- as.numeric(strftime(DateTimeZone, format="%Y"))
-month <- as.numeric(strftime(DateTimeZone, format="%m"))
-day <- as.numeric(strftime(DateTimeZone, format="%d"))
-hour <- as.numeric(strftime(DateTimeZone, format="%H"))
-minute <- as.numeric(strftime(DateTimeZone, format="%M"))
-sec <- as.numeric(strftime(DateTimeZone, format="%S"))
-#timezone <- as.numeric(strftime(DateTimeZone, format="%z"))/100  # need change!
+# Extract year, month, day, hout, minute, seconds and timezone from the input timestamp arqument which is a POSIXct object 
+year <- as.numeric(strftime(timestamp, format="%Y"))
+month <- as.numeric(strftime(timestamp, format="%m"))
+day <- as.numeric(strftime(timestamp, format="%d"))
+hour <- as.numeric(strftime(timestamp, format="%H"))
+minute <- as.numeric(strftime(timestamp, format="%M"))
+sec <- as.numeric(strftime(timestamp, format="%S"))
+#timezone <- as.numeric(strftime(timestamp, format="%z"))/100  # need change!
 
 tz <- timezone
 
